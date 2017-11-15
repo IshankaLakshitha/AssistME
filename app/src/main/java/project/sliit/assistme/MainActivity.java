@@ -19,6 +19,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import project.sliit.assistme.FirstTimeDevicesActivity;
+import project.sliit.assistme.ItemFinder.FirstTime.PersonalDetails;
 import project.sliit.assistme.ItemFinder.GPS.GPSBackgroundReciver;
 import project.sliit.assistme.ItemFinder.database.DBhandler;
 
@@ -67,7 +68,7 @@ public class MainActivity extends AppCompatActivity
             firsttime=0;
             //btndone.setVisibility(View.INVISIBLE);
         }
-        Intent intent = new Intent(this, FirstTimeDevicesActivity.class);
+        Intent intent = new Intent(this, PersonalDetails.class);
         startActivity(intent);
 
 

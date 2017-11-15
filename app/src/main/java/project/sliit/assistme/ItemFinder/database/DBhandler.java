@@ -87,7 +87,7 @@ public class DBhandler extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS"+TABLE_SCEDULE);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS"+CREATE_Scedule_Table);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS"+CREATE_ITEM_DETAILS);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS"+CREATE_ALARM_TABLE);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS"+CREATE_Health_Detail_Table);
