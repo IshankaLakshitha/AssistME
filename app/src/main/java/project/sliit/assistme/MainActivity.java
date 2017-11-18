@@ -6,9 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -18,10 +15,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import project.sliit.assistme.FirstTimeDevicesActivity;
+import java.util.Calendar;
+
+import project.sliit.assistme.IntAlarm.InterligentAlarmReciver;
 import project.sliit.assistme.ItemFinder.FirstTime.PersonalDetails;
 import project.sliit.assistme.ItemFinder.GPS.GPSBackgroundReciver;
 import project.sliit.assistme.ItemFinder.database.DBhandler;
+import project.sliit.assistme.Notifications.CallRecivers;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -64,13 +64,35 @@ public class MainActivity extends AppCompatActivity
             firsttime=1;
             //Intent intent = new Intent(this, FirstTimeDevicesActivity.class);
             //startActivity(intent);
+            Intent intent = new Intent(this, PersonalDetails.class);
+            startActivity(intent);
         }else{
             firsttime=0;
             //btndone.setVisibility(View.INVISIBLE);
         }
-        Intent intent = new Intent(this, PersonalDetails.class);
-        startActivity(intent);
 
+        CallAlrm();
+
+    }
+
+    public void CallAlrm(){//sundy is 0
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent notificationIntent = new Intent(this, CallRecivers.class);
+        notificationIntent.addCategory("android.intent.category.DEFAULT");
+        PendingIntent broadcast = PendingIntent.getBroadcast(this, 100, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(System.currentTimeMillis());
+        //cal.set(Calendar.HOUR_OF_DAY, 22);
+        //cal.set(Calendar.MINUTE, 55);
+        cal.set(Calendar.SECOND,60);
+
+        //alarmManager.setExact(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), broadcast);
+        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(),
+                AlarmManager.INTERVAL_DAY, broadcast);
+        /*alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                SystemClock.elapsedRealtime(),
+                cal.getTimeInMillis(),
+                broadcast);*/
 
     }
 
@@ -129,7 +151,8 @@ public class MainActivity extends AppCompatActivity
             Intent intent = new Intent(this, FirstTimeDevicesActivity.class);
             startActivity(intent);
         } else if (id == R.id.nav_Alarm) {
-
+            Intent intent = new Intent(this, AlarmMainActivity.class);
+            startActivity(intent);
         } else if (id == R.id.nav_Health) {
 
         }  else if (id == R.id.nav_Settings) {

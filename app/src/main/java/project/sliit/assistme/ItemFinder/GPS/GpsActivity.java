@@ -30,7 +30,7 @@ public class GpsActivity extends AppCompatActivity implements OnMapReadyCallback
         Cord = getIntent().getStringExtra("Cordinates");
         lan=Cord.split("#");
         if(googlePlayServiceAvailable()){
-            Toast.makeText(this," Done",Toast.LENGTH_LONG).show();
+            //Toast.makeText(this," Done",Toast.LENGTH_LONG).show();
             setContentView(R.layout.activity_gps);
             initMap();
         }

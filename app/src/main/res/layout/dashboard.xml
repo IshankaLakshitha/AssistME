@@ -2,7 +2,8 @@
 <android.support.design.widget.CoordinatorLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/coordinatorLayout"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinatorLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -19,14 +20,15 @@
             android:src="@android:drawable/ic_lock_silent_mode_off"
             app:layout_anchor="@id/pager"
             app:layout_anchorGravity="bottom|right|end"/>
+
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/loc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:src="@android:drawable/ic_lock_silent_mode_off"
+        android:src="@drawable/ic_action_gps"
         app:layout_anchor="@id/pager"
-        app:layout_anchorGravity="bottom|left|end"/>
+        app:layout_anchorGravity="bottom|left|end" />
 
     <LinearLayout
         android:layout_width="match_parent"

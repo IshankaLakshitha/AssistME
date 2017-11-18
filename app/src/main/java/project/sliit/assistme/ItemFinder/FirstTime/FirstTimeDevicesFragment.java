@@ -56,7 +56,7 @@ public class FirstTimeDevicesFragment extends ListFragment implements LoaderMana
        // done.setOnClickListener(View.OnClickListener);
         if(firsttime==0){
 
-            //done.setVisibility(View.GONE);
+            done.setVisibility(View.GONE);
         }
         fab.setOnClickListener(new View.OnClickListener() {
             @Override

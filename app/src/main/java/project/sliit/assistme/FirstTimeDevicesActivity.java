@@ -19,6 +19,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Toast;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -103,6 +104,7 @@ public class FirstTimeDevicesActivity extends CommonActivity implements FirstTim
     //insert data after selecting divice
     private void selectDevice(String name, String address)
     {
+        //Toast.makeText(service, "You have sot selected a tag", Toast.LENGTH_SHORT).show();
         DATABASEHANDLER.addProductItem(name,address);
         Devices.insert(this, name, address);
         Devices.setEnabled(this, address, true);

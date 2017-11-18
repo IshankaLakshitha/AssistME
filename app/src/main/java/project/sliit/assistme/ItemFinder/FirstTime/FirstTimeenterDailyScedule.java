@@ -30,7 +30,7 @@ public class FirstTimeenterDailyScedule extends AppCompatActivity {
     int DayID=1;
     CheckBox CB;
     EditText Location;
-    EditText Time;
+    EditText Timehr,Timemin;
     Spinner spinner;
     int index=0;
     List<String> Items = new ArrayList<String>();
@@ -52,7 +52,8 @@ public class FirstTimeenterDailyScedule extends AppCompatActivity {
         //test=(TextView) findViewById(R.id.txtTest);
         DAY=(TextView) findViewById(R.id.txtDay);
         Location=(EditText)findViewById(R.id.txtLocation);
-        Time=(EditText)findViewById(R.id.txtTime);
+        Timehr=(EditText)findViewById(R.id.txtTimehr);
+        Timemin=(EditText)findViewById(R.id.txtTimemin);
         spinner=(Spinner)findViewById(R.id.spinner);
 
         DAY.setText("MONDAY");
@@ -215,7 +216,7 @@ public class FirstTimeenterDailyScedule extends AppCompatActivity {
             DATABASEHANDLER.addProductSedule(Days[d]);
         }
     }*/
-
+    String time;
     public void addData(String day){
         int index1=0;
         String allItems="";//get all item to upadate database(ex: Purse#Umbrella#....)
@@ -225,7 +226,8 @@ public class FirstTimeenterDailyScedule extends AppCompatActivity {
 
             index1++;
         }
-        DATABASEHANDLER.updateDataSedule(day,allItems,Location.getText().toString(),Time.getText().toString(),spinner.getSelectedItem().toString());
+        time=Timehr.getText().toString()+"#"+Timemin.getText().toString();
+        DATABASEHANDLER.updateDataSedule(day,allItems,Location.getText().toString(),time,spinner.getSelectedItem().toString());
         //DATABASEHANDLER.updateDataSedule(day,allItems,Location.getText().toString(),Time.getText().toString(),"asas");
     }
 

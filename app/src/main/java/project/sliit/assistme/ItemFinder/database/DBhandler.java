@@ -32,7 +32,7 @@ public class DBhandler extends SQLiteOpenHelper {
     private static final String ITEM_MAC="itemMac";
     private static final String GPS="itemLocation";
 
-    String CREATE_ALARM_TABLE = "CREATE TABLE " + TABLE_ALARM + "(" + ALARM_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + NAME + " TEXT ," + LOCATION + " TEXT ,"+TRANSPORTATION +" TEXT ,"+TIME +" TEXT ,"+DAY +" TEXT ," + STATE + " TEXT "+ ");";
+    String CREATE_ALARM_TABLE = "CREATE TABLE " + TABLE_ALARM + "(" + ALARM_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + NAME + " TEXT ," + LOCATION + " TEXT ,"+TRANSPORTATION +" TEXT ,"+TIME +" TEXT ,"+DAY +" TEXT ," + STATE + " TEXT ,"+ MANUALALRMITEMS + " TEXT "+ ");";
     private static final String TABLE_ALARM="Alarm";//table name
     private static final String ALARM_ID="alarmId";
     private static final String NAME="name";
@@ -41,6 +41,7 @@ public class DBhandler extends SQLiteOpenHelper {
     private static final String TIME="time";
     private static final String DAY="day";
     private static final String STATE="state";
+    private static final String MANUALALRMITEMS="MItems";
 
 
     String CREATE_Health_Detail_Table = "CREATE TABLE " + TABLE_HEALTH + "(" + HEALTH_DAY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + HEALTH_COLUM_DATE + " TEXT ,"+HEALTH_COLUM_STEPS +" TEXT "+ ");";
@@ -96,7 +97,7 @@ public class DBhandler extends SQLiteOpenHelper {
         onCreate(sqLiteDatabase);
     }
 
-
+    //Items
     public String databasetostringSedule(String day){
         String dbString="";
         SQLiteDatabase db= getWritableDatabase();
@@ -113,6 +114,7 @@ public class DBhandler extends SQLiteOpenHelper {
         return dbString;
     }
 
+    //Time
     public String databasetostringTimeSedule(String day){
         String dbString="";
         SQLiteDatabase db= getWritableDatabase();
@@ -122,6 +124,23 @@ public class DBhandler extends SQLiteOpenHelper {
         while (!c.isAfterLast()) {
             if(c.getString(c.getColumnIndex("id"))!=null) {
                 dbString= c.getString(4);
+            }
+            c.moveToNext();
+        }
+        db.close();
+        return dbString;
+    }
+
+    //Location
+    public String databasetostringLocationSedule(String day){
+        String dbString="";
+        SQLiteDatabase db= getWritableDatabase();
+        String query = "SELECT * FROM " + TABLE_SCEDULE + " WHERE day=?";
+        Cursor c =db.rawQuery(query,new String[]{day});
+        c.moveToFirst();
+        while (!c.isAfterLast()) {
+            if(c.getString(c.getColumnIndex("id"))!=null) {
+                dbString= c.getString(3);
             }
             c.moveToNext();
         }
@@ -150,9 +169,6 @@ public class DBhandler extends SQLiteOpenHelper {
         db.insert(TABLE_SCEDULE,null,values);
         db.close();
     }
-
-
-
 
     public void addProductItem(String ItemName,String mac)
     {
@@ -234,9 +250,8 @@ public class DBhandler extends SQLiteOpenHelper {
         database.close();
     }
 
-
     //alrm methods
-    public void addAlarm(String Name, String Location,String Transportation, String Time,String Day, String State)
+    public void addAlarm(String Name, String Location,String Transportation, String Time,String Day, String State,String Items)
     {
         ContentValues values= new ContentValues();
         values.put(NAME,Name);
@@ -245,20 +260,67 @@ public class DBhandler extends SQLiteOpenHelper {
         values.put(TIME,Time);
         values.put(DAY,Day);
         values.put(STATE,State);
+        //values.put(MANUALALRMITEMS,Items);
         SQLiteDatabase db= getWritableDatabase();
         db.insert(TABLE_ALARM,null,values);
         db.close();
     }
 
-    public boolean updateAlarmState(String Alrmid, String Name){
+    public boolean updateAlarmState(String Name, String State){
         SQLiteDatabase sq=this.getWritableDatabase();
         ContentValues values=new ContentValues();
-        values.put(ALARM_ID,Alrmid);
-        values.put(NAME,Name);
-        sq.update(TABLE_ALARM,values,"alarmId=?",new String[]{ALARM_ID});
+        values.put(STATE,State);
+        sq.update(TABLE_ALARM,values,"name=?",new String[]{Name});
         return true;
     }
 
+    public String databasetostringAlarmDetails(String Day){
+        String dbString=" ";
+        SQLiteDatabase db= getWritableDatabase();
+        String query = "SELECT * FROM " + TABLE_ALARM + " WHERE day=?";
+        Cursor c =db.rawQuery(query,new String[]{Day});
+        c.moveToFirst();
+        while (!c.isAfterLast()) {
+            if(c.getString(c.getColumnIndex("alarmId"))!=null) {
+                dbString= c.getString(4)+"@"+c.getString(6);
+            }
+            c.moveToNext();
+        }
+        db.close();
+        return dbString;
+    }
+
+    public String SelectAllAlarmState(){
+        String dbString="";
+        SQLiteDatabase db= getWritableDatabase();
+        String query = "SELECT * FROM " + TABLE_ALARM ;
+        Cursor c =db.rawQuery(query,null);
+        c.moveToFirst();
+        while (!c.isAfterLast()) {
+            if(c.getString(c.getColumnIndex("alarmId"))!=null) {
+                dbString= dbString+"#"+c.getString(6);
+            }
+            c.moveToNext();
+        }
+        db.close();
+        return dbString;
+    }
+
+    public String SelectAllAlarmName(){
+        String dbString="";
+        SQLiteDatabase db= getWritableDatabase();
+        String query = "SELECT * FROM " + TABLE_ALARM ;
+        Cursor c =db.rawQuery(query,null);
+        c.moveToFirst();
+        while (!c.isAfterLast()) {
+            if(c.getString(c.getColumnIndex("alarmId"))!=null) {
+                dbString= dbString+"#"+c.getString(1);
+            }
+            c.moveToNext();
+        }
+        db.close();
+        return dbString;
+    }
 
     public String databasetostringAlarm(String Day){
         String dbString="";
