@@ -12,6 +12,7 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.widget.TextView;
 
+import project.sliit.assistme.FirstTimeDevicesActivity;
 import project.sliit.assistme.MainActivity;
 import project.sliit.assistme.R;
 
@@ -27,10 +28,10 @@ public class AlarmReceiverItemNotification extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Intent notificationIntent = new Intent(context, PopUpNotificationActivity.class);
+        Intent notificationIntent = new Intent(context, FirstTimeDevicesActivity.class);
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
-        stackBuilder.addParentStack(PopUpNotificationActivity.class);
+        stackBuilder.addParentStack(FirstTimeDevicesActivity.class);
         stackBuilder.addNextIntent(notificationIntent);
 
         PendingIntent pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -39,15 +40,16 @@ public class AlarmReceiverItemNotification extends BroadcastReceiver {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         //RM.itemsForDay()
         Notification notification = builder.setContentTitle("AssistMe")
-                .setContentText(Items)
+                .setContentText(RM.itemsForDay())
                 .setTicker("New Message Alert!")
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.mipmap.logo)
                 .setContentIntent(pendingIntent).build();
 
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(0, notification);
 
-        BroadcastReceiver broadcastReceiver = new WifiBroadcastReceiver();
+        //BroadcastReceiver broadcastReceiver = new WifiBroadcastReceiver();
+
 
        /* IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(WifiManager.SUPPLICANT_STATE_CHANGED_ACTION);
@@ -55,6 +57,14 @@ public class AlarmReceiverItemNotification extends BroadcastReceiver {
         //intentFilter.addAction("android.net.wifi.STATE_CHANGE");
         context.registerReceiver(broadcastReceiver, intentFilter);*/
 
+      /*  BroadcastReceiver broadcastReceiver1 = new WifiBroadcastReceiver();
+
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(WifiManager.SUPPLICANT_STATE_CHANGED_ACTION);
+        intentFilter.addAction("android.net.wifi.WIFI_STATE_CHANGED");
+        //intentFilter.addAction("android.net.wifi.STATE_CHANGE");
+        context.registerReceiver(broadcastReceiver1, intentFilter);
+*/
 
     }
 

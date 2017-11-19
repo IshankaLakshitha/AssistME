@@ -61,21 +61,22 @@ public class UpdateGps extends Activity implements  Runnable {
 
     @Override
     public void run() {
-
-        for(int x=1;x<myList.size();x++){
-            int y=1;
-            address=myList.get(x);
-
-            //service.connect(address);
-                if (y==1) {
-                    Log.v("dd","Conected"+address);
-                }else{
-                    Log.v("dd","Not Conected"+address);
+        if(myList!=null) {
+            for (int x = 1; x < myList.size(); x++) {
+                int y = 1;
+                address = myList.get(x);
+                Log.v("Isha", "Tag ok "+myList.get(x));
+                //service.connect(address);
+                if (y == 1) {
+                    Log.v("dd", "Conected " + address);
+                } else {
+                    Log.v("dd", "Not Conected " + address);
                 }
-            //service.connect(address);
-            Log.v("aa",address+"Ish");
-            DATABASEHANDLER.updateDataItemLocation(myList.get(x), location);
-            Log.v("dd","Done");
+                //service.connect(address);
+                Log.v("aa", address + "Ish");
+                DATABASEHANDLER.updateDataItemLocation(myList.get(x), location);
+                //Log.v("dd", "Done");
+            }
         }try {
             Thread.sleep(1000);
         }catch (InterruptedException e){

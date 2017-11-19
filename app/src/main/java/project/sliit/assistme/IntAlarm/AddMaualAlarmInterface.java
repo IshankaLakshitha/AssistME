@@ -15,6 +15,9 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,8 +39,13 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+
+import static project.sliit.assistme.MainActivity.DATABASEHANDLER;
 
 public class AddMaualAlarmInterface extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
@@ -57,7 +65,7 @@ public class AddMaualAlarmInterface extends AppCompatActivity implements Adapter
 
     int hour = 0;
     int minute = 0;
-
+    List<String> Items = new ArrayList<String>();
     //Weather >>>>>>>>>>>>>>>>>>>>>>>
     private boolean weatherCondition;
     private String myAppId = "dcb6553bfccc040683d9917eedd6cfbe";
@@ -72,13 +80,19 @@ public class AddMaualAlarmInterface extends AppCompatActivity implements Adapter
     double destLat, destLng;
     int durationHours=0, durationMins=0;
     GoogleMap mMap;
+    TextView Alarmname;
+    CheckBox checkBox;
+    String allItems="";
+    public List<String> myList = new ArrayList<>();
+    LinearLayout linearMain1,linearMain2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_manual_alarm);
+        setContentView(R.layout.new_add_manual_alrm);
         this.context = this;
 
+        Alarmname=findViewById(R.id.alarm_title);
         alarm_manager = (AlarmManager)getSystemService(ALARM_SERVICE);
         update_text = (TextView)findViewById(R.id.update_alarm);
         final Calendar calendar = Calendar.getInstance(); //Create an instance of the calendar
@@ -91,18 +105,53 @@ public class AddMaualAlarmInterface extends AppCompatActivity implements Adapter
         //renderWeatherData("Colombo,LK");
         //ERROR
         //Colombo,LK
+        allItems=DATABASEHANDLER.SelectAllItemsName();
+        String[] array = allItems.split("#");
+        myList = Arrays.asList(array);
+        linearMain1 =findViewById(R.id.linear_main1);
+        linearMain2 =findViewById(R.id.linear_main2);
+
+
+        for(int i = 1; i < myList.size(); i++) {
+
+            checkBox = new CheckBox(this);
+            checkBox.setId(i);
+
+            checkBox.setText(myList.get(i));
+            checkBox.setTextSize(18);
+
+            //checkBox.setGravity(Gravity.CENTER);
+            checkBox.setOnClickListener(RadioClick(checkBox));
+            if(i%2==1) {
+                linearMain1.addView(checkBox);
+            }else{
+                linearMain2.addView(checkBox);
+            }
+            //linearMain2.addView(checkBox);
+        }
         //Spokane,US
 
-        Spinner spinner = (Spinner) findViewById(R.id.spinner);
+        final Spinner spinner = (Spinner) findViewById(R.id.transportSpin);
         // Create an ArrayAdapter using the string array and a default spinner layout
         final ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.alarms_array, android.R.layout.simple_spinner_item);
+                R.array.Transportation_array, android.R.layout.simple_spinner_item);
         // Specify the layout to use when the list of choices appears
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
         spinner.setAdapter(adapter);
 
         spinner.setOnItemSelectedListener(this);
+
+        final Spinner spinnerDay = (Spinner) findViewById(R.id.daySpin);
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        final ArrayAdapter<CharSequence> adapter1 = ArrayAdapter.createFromResource(this,
+                R.array.day_array, android.R.layout.simple_spinner_item);
+        // Specify the layout to use when the list of choices appears
+        adapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner
+        spinnerDay.setAdapter(adapter1);
+
+        spinnerDay.setOnItemSelectedListener(this);
 
 
         //turn_on
@@ -112,9 +161,17 @@ public class AddMaualAlarmInterface extends AppCompatActivity implements Adapter
         alarm_on.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                int index1=0;
+                String allItems="";
+                int len=Items.size();
+                while (index1<len){
+                    allItems=Items.get(index1)+"#"+allItems;
 
-                MainActivity.DATABASEHANDLER.addAlarm("Test",dest.latitude+"#"+dest.longitude,"Bus"
-                        ,MyTimePicker.hoursTP+"#"+MyTimePicker.minsTP,"SAT","true","testItems");
+                    index1++;
+                }
+                Log.d("Isha",Alarmname.getText().toString());
+                MainActivity.DATABASEHANDLER.addAlarm(Alarmname.getText().toString(),dest.latitude+"#"+dest.longitude,spinner.getSelectedItem().toString()
+                        ,MyTimePicker.hoursTP+"#"+MyTimePicker.minsTP,spinnerDay.getSelectedItem().toString(),"true",allItems);
                 //adapter.updateRecords(users);
                 finish();
                 //Intent intent1=new Intent(getApplicationContext(),InterligentAlarm.class);
@@ -124,31 +181,7 @@ public class AddMaualAlarmInterface extends AppCompatActivity implements Adapter
             }
         });
 
-        //turn_off
 
-
-        //Button alarm_off = (Button)findViewById(R.id.alarm_off);
-        /*alarm_off.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                set_alarm_text("Alarm Off");//changes the text in the update text box
-
-                alarm_manager.cancel(pending_intent);
-
-                my_intent.putExtra("extra", "alarm off");//tells the clock that the alarm off button is pressed, putting extra string to my_intent
-
-                my_intent.putExtra("alarm tone",alarm_tracks);//prevent crashes in a null point exception
-
-                sendBroadcast(my_intent);//Stops the ringtone
-
-            }
-        });*/
-
-
-        //renderWeatherData("Spokane,US"); //ERROR
-        //Colombo,LK
-        //Spokane,US
 
     }
 
@@ -164,50 +197,6 @@ public class AddMaualAlarmInterface extends AppCompatActivity implements Adapter
             return null;
         }
     }
-
-
-/*
-    public LatLng findNearestStation(double lat, double lng){
-
-        LatLng nearestTrainLatLng;
-
-        OtherMethods otherMethods = new OtherMethods();
-        String keyType = "train_station";
-        String trainUrl = otherMethods.getNearbyTrainUrl(lat, lng, keyType);
-
-        Log.d("TRAIN URL", " "+trainUrl);
-
-        Object dataTransfer[] = new Object[2];
-        dataTransfer[0] = mMap;
-        dataTransfer[1] = trainUrl;
-
-        GetNearbyPlacesData getNearbyPlacesData = new GetNearbyPlacesData();
-        getNearbyPlacesData.execute(dataTransfer);
-        nearestTrainLatLng = getNearbyPlacesData.getLatLng(); // ADD CODE - GETLATLNG FROM getNearbyPlacesData
-
-        Log.d("Train LAT LNG",nearestTrainLatLng.toString());
-
-        return nearestTrainLatLng;
-    }*/
-
-//    public int distanceFromAtoB(double A_lat, double A_lng, double B_lat, double B_lng){
-//
-//        OtherMethods otherMethods = new OtherMethods();
-//        Object dataTransfer[] = new Object[3];
-//        String distanceUrl = otherMethods.getDirectionUrl(A_lat, A_lng, B_lat, B_lng);
-//        //GetDirectionsData getDirectionsData = new GetDirectionsData();
-//
-//        dataTransfer[0] = mMap;
-//        dataTransfer[1] = distanceUrl;
-//        dataTransfer[2] = new LatLng(B_lat,B_lng);
-//
-//       // getDirectionsData.execute(dataTransfer); // EXTRACT
-//
-//       // distance = otherMethods.extractDistance(GetDirectionsData.distance);
-//
-//        return distance;
-//
-//    }
 
 
 
@@ -278,7 +267,21 @@ public class AddMaualAlarmInterface extends AppCompatActivity implements Adapter
      */
 
 
+    View.OnClickListener RadioClick(final Button button){
+        return new View.OnClickListener() {
 
+            @Override
+            public void onClick(View v) {
+                boolean checked=((CheckBox)v).isChecked();
+                if(checked)
+                    Items.add(button.getText().toString());
+                    //Log.d("ON_CLICK", "CheckBox ID: " + button.getId() + " Text: " + button.getText().toString());
+                else
+                    Items.remove(button.getText().toString());
+                //Log.d("ON_CLICK111", "CheckBox ID: " + button.getId() + " Text: " + button.getText().toString());
+            }
+        };
+    }
 
 
     @Override

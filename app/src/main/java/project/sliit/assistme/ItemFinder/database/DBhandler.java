@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 /**
  * Created by DELL on 7/18/2017.
@@ -69,6 +70,13 @@ public class DBhandler extends SQLiteOpenHelper {
     private static final String RedyTime="rtime";
     private static final String Location="locat";
 
+    String CREATE_Reminder_Table = "CREATE TABLE " + Table_Reminder + "(" + REMINDER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + R_NOTES + " TEXT," + R_DAY + " TEXT " + ");";
+    private static final String Table_Reminder = "reminder";
+    private static final String REMINDER_ID = "id";
+    private static final String R_NOTES = "notes";
+    private static final String R_DAY = "day";
+
+
     public DBhandler(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, DATABASE_NAME, factory, DATABASE_VERSION);
     }
@@ -84,6 +92,7 @@ public class DBhandler extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(CREATE_Health_Detail_Table);
         sqLiteDatabase.execSQL(CREATE_User_Details_Table);
         sqLiteDatabase.execSQL(CREATE_User_Name_Table);
+        sqLiteDatabase.execSQL(CREATE_Reminder_Table);
     }
 
     @Override
@@ -94,6 +103,7 @@ public class DBhandler extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS"+CREATE_Health_Detail_Table);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS"+CREATE_User_Details_Table);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS"+CREATE_User_Name_Table);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + CREATE_Reminder_Table);
         onCreate(sqLiteDatabase);
     }
 
@@ -114,6 +124,38 @@ public class DBhandler extends SQLiteOpenHelper {
         return dbString;
     }
 
+    public String databasetostringSeduleTMode(String day){
+        String dbString="";
+        SQLiteDatabase db= getWritableDatabase();
+        String query = "SELECT * FROM " + TABLE_SCEDULE + " WHERE day=?";
+        Cursor c =db.rawQuery(query,new String[]{day});
+        c.moveToFirst();
+        while (!c.isAfterLast()) {
+            if(c.getString(c.getColumnIndex("id"))!=null) {
+                dbString= c.getString(5);
+            }
+            c.moveToNext();
+        }
+        db.close();
+        return dbString;
+    }
+
+    public String getDataOfColumns(String day){
+        String dbString="";
+        SQLiteDatabase db= getWritableDatabase();
+        String query = "SELECT * FROM " + TABLE_SCEDULE + " WHERE day=?";
+        Cursor c =db.rawQuery(query,new String[]{day});
+        c.moveToFirst();
+        while (!c.isAfterLast()) {
+            if(c.getString(c.getColumnIndex("id"))!=null) {
+                dbString= c.getString(1)+"#"+c.getString(3)+"#"+c.getString(4)+"#"+c.getString(5);
+            }
+            c.moveToNext();
+        }
+        db.close();
+        return dbString;
+    }
+
     //Time
     public String databasetostringTimeSedule(String day){
         String dbString="";
@@ -123,7 +165,7 @@ public class DBhandler extends SQLiteOpenHelper {
         c.moveToFirst();
         while (!c.isAfterLast()) {
             if(c.getString(c.getColumnIndex("id"))!=null) {
-                dbString= c.getString(4);
+                dbString= c.getString(4)+"#"+c.getString(3);
             }
             c.moveToNext();
         }
@@ -150,6 +192,7 @@ public class DBhandler extends SQLiteOpenHelper {
 
     //update database
     public boolean updateDataSedule(String day, String items,String loc,String Tim,String Mode){
+        Log.d("Database",loc);
         SQLiteDatabase sq=this.getWritableDatabase();
         ContentValues values=new ContentValues();
         values.put(SCEDULE_COLUM_Location,loc);
@@ -274,6 +317,7 @@ public class DBhandler extends SQLiteOpenHelper {
         return true;
     }
 
+    //2
     public String databasetostringAlarmDetails(String Day){
         String dbString=" ";
         SQLiteDatabase db= getWritableDatabase();
@@ -282,7 +326,7 @@ public class DBhandler extends SQLiteOpenHelper {
         c.moveToFirst();
         while (!c.isAfterLast()) {
             if(c.getString(c.getColumnIndex("alarmId"))!=null) {
-                dbString= c.getString(4)+"@"+c.getString(6);
+                dbString= c.getString(4)+"@"+c.getString(6)+"@"+c.getString(2);
             }
             c.moveToNext();
         }
@@ -346,7 +390,10 @@ public class DBhandler extends SQLiteOpenHelper {
         database.close();
     }
 
-    public String databasetostringHealth(String day){
+
+
+
+    public String databasetostringStep(String day){
         String dbString="";
         SQLiteDatabase db= getWritableDatabase();
         String query = "SELECT * FROM " + TABLE_HEALTH + " WHERE date=?";
@@ -368,12 +415,46 @@ public class DBhandler extends SQLiteOpenHelper {
     {
         ContentValues values= new ContentValues();
         values.put(HEALTH_COLUM_DATE,day);
+        //values.put(SCEDULE_COLUM_Location,loc);
         SQLiteDatabase db= getWritableDatabase();
         db.insert(TABLE_HEALTH,null,values);
         db.close();
     }
 
+    public String SelectAllStepDetailsDates(){
+        String dbString="";
+        SQLiteDatabase db= getWritableDatabase();
+        String query = "SELECT * FROM " + TABLE_HEALTH ;
+        Cursor c =db.rawQuery(query,null);
+        c.moveToFirst();
+        while (!c.isAfterLast()) {
+            if(c.getString(c.getColumnIndex("id"))!=null) {
+                dbString= dbString+"#"+c.getString(1);
+            }
+            c.moveToNext();
+        }
+        db.close();
+        return dbString;
+    }
+
+    public String SelectAllStepDetailsSteps(){
+        String dbString="";
+        SQLiteDatabase db= getWritableDatabase();
+        String query = "SELECT * FROM " + TABLE_HEALTH ;
+        Cursor c =db.rawQuery(query,null);
+        c.moveToFirst();
+        while (!c.isAfterLast()) {
+            if(c.getString(c.getColumnIndex("id"))!=null) {
+                dbString= dbString+"#"+c.getString(2);
+            }
+            c.moveToNext();
+        }
+        db.close();
+        return dbString;
+    }
+
     public boolean updateDataHealth(String day, String steps){
+        Log.d("Isha","CountUpdated"+steps);
         SQLiteDatabase sq=this.getWritableDatabase();
         ContentValues values=new ContentValues();
         values.put(HEALTH_COLUM_STEPS,steps);
@@ -440,6 +521,67 @@ public class DBhandler extends SQLiteOpenHelper {
         SQLiteDatabase db= getWritableDatabase();
         db.insert(TABLE_nUSER,null,values);
         db.close();
+    }
+
+
+    public String SelectReadyTime(){
+        String dbString="";
+        SQLiteDatabase db= getWritableDatabase();
+        String query = "SELECT * FROM " + TABLE_nUSER ;
+        Cursor c =db.rawQuery(query,null);
+        c.moveToFirst();
+        while (!c.isAfterLast()) {
+            if(c.getString(c.getColumnIndex("uId"))!=null) {
+                dbString= c.getString(4);
+            }
+            c.moveToNext();
+        }
+        db.close();
+        return dbString;
+    }
+
+    public String databasetostringReminder(String day) {
+        String dbString = "";
+        SQLiteDatabase db = getWritableDatabase();
+        String query = "SELECT * FROM " + Table_Reminder + " WHERE day=?";
+        Cursor c = db.rawQuery(query, new String[]{day});
+        c.moveToFirst();
+        while (!c.isAfterLast()) {
+            if (c.getString(c.getColumnIndex("id")) != null) {
+                dbString = c.getString(1);
+            }
+            c.moveToNext();
+        }
+        db.close();
+        return dbString;
+    }
+
+    public void addReminders(String notes, String date) {
+        Log.d("Isha",notes+date);
+        ContentValues values = new ContentValues();
+        values.put(R_NOTES, notes);
+        values.put(R_DAY, date);
+
+        SQLiteDatabase db = getWritableDatabase();
+        db.insert(Table_Reminder, null, values);
+        db.close();
+    }
+
+
+    public String SelectAllReminders(){
+        String dbString="";
+        SQLiteDatabase db= getWritableDatabase();
+        String query = "SELECT * FROM " + Table_Reminder ;
+        Cursor c =db.rawQuery(query,null);
+        c.moveToFirst();
+        while (!c.isAfterLast()) {
+            if(c.getString(c.getColumnIndex("id"))!=null) {
+                dbString= dbString+"#"+c.getString(1);
+            }
+            c.moveToNext();
+        }
+        db.close();
+        return dbString;
     }
     //update database
 

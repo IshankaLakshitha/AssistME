@@ -1,5 +1,7 @@
 package project.sliit.assistme.IntAlarm;
 
+import android.util.Log;
+
 /**
  * Created by navin on 10/18/2017.
  */
@@ -31,35 +33,58 @@ public class OtherMethods {
 
 
     public int extractDistance(String distance){
+        Log.d("OtherMethods(extrctDis)","Got through YAYY = "+distance);
+
         String[] parts = distance.split(" ");
-        int a_b = Integer.parseInt(parts[0]);
+
+        float a_b_flt = Float.parseFloat(parts[0]);
+        String km = parts[1];
+
+        Log.d("OtherMethods(extrctDis)","Float Successful YAYY = "+a_b_flt);
+
+        int a_b = (int)a_b_flt;
+
+        Log.d("OtherMethods(extrctDis)","FLoat Convert Succes YAYY = "+a_b);
 
         return a_b;
     }
-/*
-    public String extractDuration(String duration){
+    public int[] extractDuration(String duration){
 
+        Log.d("OtherMethods(extrctDis)","YAYYY = "+duration);
         String[] parts = duration.split(" ");
+        int partsSize = parts.length;
 
-        if (parts[1] == "mins") {
-            String durMins = parts[0];
+        //ERROR IS HERE
+        if (partsSize == 2) {
+            String durSMins = parts[0];
+            int[] durMins = {Integer.parseInt(durSMins)};
 
             return durMins;
         }
-        else{
+        else if (partsSize == 4){
+            String durSMins = parts[2];
+            String durSHrs = parts[0];
 
-            String durMins = parts[2];
-            String durHrs = parts[0];
-
-            String durHrsMins = durHrs + " " + durMins;
+            int[] durHrsMins = {Integer.parseInt(durSHrs), Integer.parseInt(durSMins)};
+//            String durSHrsMins = durSHrs + " " + durSMins;
 
             return durHrsMins;
         }
+        else{
+            Log.e("OtherMethods(extrctDis)","ERROR: Epic fail. NOT WORKING!");
+            int[] arr = {0};
+            return arr;
+        }
     }
-*/
     public int extractTrainDuration(String trainDuration) {
         int trainDur = Integer.parseInt(trainDuration);
         return trainDur;
+    }
+
+    public String extractTrainStationName(String trainStationName){
+        String[] parts = trainStationName.split(" ");
+        String trainName = parts[0];
+        return trainName;
     }
 
 }

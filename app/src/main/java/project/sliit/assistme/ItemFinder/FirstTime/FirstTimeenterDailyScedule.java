@@ -3,7 +3,9 @@ package project.sliit.assistme.ItemFinder.FirstTime;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -11,6 +13,14 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.places.AutocompleteFilter;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocomplete;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,14 +36,20 @@ public class FirstTimeenterDailyScedule extends AppCompatActivity {
     TextView test;
     TextView DAY;
     Button GOPREV,GONEXT;
+    String destAddress;
+    private LatLng dest;
+    Button butnLoc;
+
+    int PLACE_AUTOCOMPLETE_REQUEST_CODE = 1;
 
     int DayID=1;
     CheckBox CB;
-    EditText Location;
+    String Location;
     EditText Timehr,Timemin;
     Spinner spinner;
     int index=0;
     List<String> Items = new ArrayList<String>();
+    String LatLan;
 
     LinearLayout linearMain1,linearMain2;
     CheckBox checkBox;
@@ -46,12 +62,10 @@ public class FirstTimeenterDailyScedule extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_first_timeenter_daily_scedule);
 
-
-
-
+        butnLoc=findViewById(R.id.buttonLoca);
         //test=(TextView) findViewById(R.id.txtTest);
         DAY=(TextView) findViewById(R.id.txtDay);
-        Location=(EditText)findViewById(R.id.txtLocation);
+//        Location=(EditText)findViewById(R.id.txtLocation);
         Timehr=(EditText)findViewById(R.id.txtTimehr);
         Timemin=(EditText)findViewById(R.id.txtTimemin);
         spinner=(Spinner)findViewById(R.id.spinner);
@@ -75,6 +89,8 @@ public class FirstTimeenterDailyScedule extends AppCompatActivity {
 // Apply the adapter to the spinner
         spinner.setAdapter(adapter);
 
+        String text = spinner.getSelectedItem().toString();
+        Log.d("Isha",text);
 
         linearMain1 =findViewById(R.id.linear_main1);
         linearMain2 =findViewById(R.id.linear_main2);
@@ -216,6 +232,8 @@ public class FirstTimeenterDailyScedule extends AppCompatActivity {
             DATABASEHANDLER.addProductSedule(Days[d]);
         }
     }*/
+
+
     String time;
     public void addData(String day){
         int index1=0;
@@ -227,7 +245,9 @@ public class FirstTimeenterDailyScedule extends AppCompatActivity {
             index1++;
         }
         time=Timehr.getText().toString()+"#"+Timemin.getText().toString();
-        DATABASEHANDLER.updateDataSedule(day,allItems,Location.getText().toString(),time,spinner.getSelectedItem().toString());
+        //Location= Place.ge
+        DATABASEHANDLER.updateDataSedule(day,allItems,LatLan,time,spinner.getSelectedItem().toString());
+        Log.d("Isha",LatLan);
         //DATABASEHANDLER.updateDataSedule(day,allItems,Location.getText().toString(),Time.getText().toString(),"asas");
     }
 
@@ -251,57 +271,67 @@ public class FirstTimeenterDailyScedule extends AppCompatActivity {
         };
     }
 
+    public void addLocation(View view) {
 
+        try {
+            AutocompleteFilter typeFilter = new AutocompleteFilter.Builder()
+                    .setCountry("LK")
+                    .build();
 
-
-
-/*
-    public void aaa(View view) {
-        boolean checked=((CheckBox)view).isChecked();
-
-        switch (((CheckBox) view).getText().toString()){
-
-            case "Purse": if(checked){
-                Items.add("Purse");
-                // test.setText(Items.get(2));
-
-            }else {
-                Items.remove("Purse");
-            }index++;
-                break;
-
-            case  "Car Keys": if(checked){
-                Items.add("Car Keys");
-
-            }else {
-                Items.remove("Car Keys");
-            }index++;
-                break;
-
-            case "Door Keys": if(checked){
-                Items.add("Door Keys");
-
-            }else {
-                Items.remove("Door Keys");
-            }index++;
-                break;
-
-            case  "Umbrella": if(checked){
-                Items.add("Umbrella");
-
-            }else {
-                Items.remove("Umbrella");
-            }index++;
-                break;
-
-            case "Water Bottle": if(checked){
-                Items.add("Water Bottle");
-            }else {
-                Items.remove("Water Bottle");
-            }index++;
-
-                break;
-
+            Intent intent =
+                    new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_OVERLAY)
+                            .setFilter(typeFilter)
+                            .build(this);
+            startActivityForResult(intent, PLACE_AUTOCOMPLETE_REQUEST_CODE);
+        } catch (GooglePlayServicesRepairableException e) {
+            // TODO: Handle the error.
+        } catch (GooglePlayServicesNotAvailableException e) {
+            // TODO: Handle the error.
         }
-    }*/
+
+    }
+
+
+
+
+    public String extractCity(String fullAddress){
+        if(!(fullAddress == null)){
+            String[] parts = fullAddress.split(", ");
+            String extracted = parts[1];
+            Log.i("Extracted City:", extracted);
+            return extracted;
+        }
+        else{
+            Log.i("ERROR: ", "Can't extract city cos the String provided is NULL");
+            return null;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                Place place = PlaceAutocomplete.getPlace(this, data);
+                dest = place.getLatLng();
+
+                destAddress = place.getAddress().toString();
+                butnLoc.setText(place.getName());
+                LatLan=dest.latitude+"#"+dest.longitude+"#"+place.getName();
+                //LatLan=dest.toString();
+                Log.i("Destination", "Place: " + place.getName());
+                Log.i("City", extractCity(place.getAddress().toString()));
+                Log.i("Address", place.getAddress().toString());
+                Log.i("LatLng",dest.toString());
+
+            } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
+                Status status = PlaceAutocomplete.getStatus(this, data);
+                // TODO: Handle the error.
+                Log.i("Destination", status.getStatusMessage());
+
+            } else if (resultCode == RESULT_CANCELED) {
+                // The user canceled the operation.
+            }
+        }
+    }
+
 }

@@ -106,4 +106,14 @@
         <item>nokiatwo</item>
         <item>sweetalarm</item>
     </string-array>
+
+    <string-array name="day_array">
+        <item>MON</item>
+        <item>TUE</item>
+        <item>WEN</item>
+        <item>THU</item>
+        <item>FRI</item>
+        <item>SAT</item>
+        <item>SUN</item>
+    </string-array>
 </resources>

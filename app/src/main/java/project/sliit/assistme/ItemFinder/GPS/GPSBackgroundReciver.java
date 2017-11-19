@@ -22,7 +22,7 @@ public class GPSBackgroundReciver extends BroadcastReceiver{
 
     @Override
     public void onReceive(Context arg0, Intent arg1) {
-        Log.v("dd","dsd");
+        Log.v("Isha","Update Gps Tags");
 
 
 

@@ -68,6 +68,8 @@
 
         <receiver android:name=".ItemFinder.GPS.GPSBackgroundReciver" />
 
+        <activity android:name=".Settings.SettingsPage"/>
+
         <meta-data
         android:name="com.google.android.geo.API_KEY"
         android:value="AIzaSyCeHU8ParZgqWJzVpiorJQ2lu4HK5PF1e8" />
@@ -76,6 +78,13 @@
             android:value="@integer/google_play_services_version" />
 
         <activity android:name=".ItemFinder.FirstTime.PersonalDetails"></activity>
+
+        <activity android:name=".Health.UserDetails" />
+        <activity android:name=".Health.StepsCount" />
+        <activity android:name=".Health.HelthTips"/>
+        <activity android:name=".Health.ListViewRemovalAnimation"/>
+        <activity android:name=".HealthMainActivity"/>
+        <activity android:name=".Health.HealthCountActivity"/>
 
         <activity android:name=".AlarmMainActivity"></activity>
 
@@ -108,6 +117,12 @@
             android:enabled="true" />
 
         <receiver android:name=".IntAlarm.InterligentAlarmReciver"/>
+
+        <activity android:name=".Health.AddReminders"/>
+
+        <receiver android:name=".Notifications.HealthReminder"/>
+
+        <activity android:name=".Settings.UpdateDayScedule"/>
 
     </application>
 

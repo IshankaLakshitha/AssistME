@@ -103,36 +103,19 @@
         app:layout_constraintVertical_bias="0.645" />
 
     <EditText
-        android:id="@+id/txtLocation"
-        android:layout_width="176dp"
-        android:layout_height="44dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:textAlignment="center"
-        app:layout_constraintHorizontal_bias="0.51"
-        app:layout_constraintLeft_toRightOf="@+id/textView2"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
-
-    <EditText
         android:id="@+id/txtTimemin"
         android:layout_width="71dp"
         android:layout_height="41dp"
         android:layout_marginBottom="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
-        android:layout_marginTop="8dp"
         android:ems="10"
         android:inputType="time"
         android:textAlignment="center"
         app:layout_constraintBottom_toTopOf="@+id/spinner"
         app:layout_constraintHorizontal_bias="0.755"
         app:layout_constraintLeft_toRightOf="@+id/textView4"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtLocation"
-        app:layout_constraintVertical_bias="0.666" />
+        app:layout_constraintRight_toRightOf="parent" />
 
     <EditText
         android:id="@+id/txtTimehr"
@@ -141,16 +124,13 @@
         android:layout_marginBottom="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
-        android:layout_marginTop="8dp"
         android:ems="10"
         android:inputType="time"
         android:textAlignment="center"
         app:layout_constraintBottom_toTopOf="@+id/spinner"
         app:layout_constraintHorizontal_bias="0.329"
         app:layout_constraintLeft_toRightOf="@+id/textView4"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtLocation"
-        app:layout_constraintVertical_bias="0.666" />
+        app:layout_constraintRight_toRightOf="parent" />
 
     <LinearLayout
         android:id="@+id/linearLayout2"
@@ -181,6 +161,21 @@
             android:onClick="goNEXT"
             android:text="Button" />
     </LinearLayout>
+
+    <Button
+        android:id="@+id/buttonLoca"
+        android:layout_width="181dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:onClick="addLocation"
+        android:text="Location"
+        app:layout_constraintBottom_toTopOf="@+id/txtTimemin"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textView2"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
 
 
 </android.support.constraint.ConstraintLayout>

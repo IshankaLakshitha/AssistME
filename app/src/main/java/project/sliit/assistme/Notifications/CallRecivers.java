@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -33,6 +34,9 @@ public class CallRecivers extends BroadcastReceiver {
     String Time[];
     String state;
     int hr,Min,reciverHr;
+    double lat,lang;
+    String LatLan[];
+    String Tmode="a";
 
     public List<String> myList = new ArrayList<>();
 
@@ -41,15 +45,18 @@ public class CallRecivers extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
 
         AlarmDetails=MainActivity.DATABASEHANDLER.databasetostringAlarmDetails(currntDay());
-
-        if(AlarmDetails==null||AlarmDetails.equals(" ")){
-            Log.d("isha","null Array");
+        Log.d("isha","c"+AlarmDetails+"d");
+        if(AlarmDetails.equals(" ")){
+          Log.d("isha","null Array");
             AlarmDetails=DATABASEHANDLER.databasetostringTimeSedule(currntDay());
             Time=AlarmDetails.split("#");
             hr=Integer.parseInt(Time[0]);
             Min=Integer.parseInt(Time[1]);
+            lat=Double.parseDouble(Time[2]);
+            lang=Double.parseDouble(Time[3]);
+            Tmode=DATABASEHANDLER.databasetostringSeduleTMode(currntDay());
             reciverHr=hr-2;
-            Log.d("isha","Sceduled Alarm"+hr+" "+Min);
+            Log.d("isha","Sceduled Alarm"+reciverHr+" "+Min+" "+lat+" "+lang+" "+Time[4]+" "+Tmode);
         }else {
             AlarmDetailsArr=AlarmDetails.split("@");
 
@@ -58,8 +65,11 @@ public class CallRecivers extends BroadcastReceiver {
                 Time=AlarmDetailsArr[0].split("#");
                 hr=Integer.parseInt(Time[0]);
                 Min=Integer.parseInt(Time[1]);
+                LatLan=AlarmDetailsArr[2].split("#");
+                lat=Double.parseDouble(LatLan[0]);
+                lang=Double.parseDouble(LatLan[1]);
                 reciverHr=hr-2;
-                Log.d("isha","Manual Alarm"+hr+" "+Min);
+                Log.d("isha","Manual Alarm"+reciverHr+" "+Min+" "+lat+" "+lang+" " );
             }
         }
 
@@ -72,10 +82,15 @@ public class CallRecivers extends BroadcastReceiver {
         Intent notificationIntent = new Intent(context, InterligentAlarmReciver.class);
         notificationIntent.putExtra("Hour",hr);
         notificationIntent.putExtra("Mins",Min);
+        notificationIntent.putExtra("lat",lat);
+        notificationIntent.putExtra("lang",lang);
+        notificationIntent.putExtra("Tmode",Tmode);
+
         notificationIntent.addCategory("android.intent.category.DEFAULT");
         PendingIntent broadcast = PendingIntent.getBroadcast(context, 100, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(System.currentTimeMillis());
+        //cal.set(Calendar.DAY_OF_WEEK,3);
         cal.set(Calendar.HOUR_OF_DAY, reciverHr);
         cal.set(Calendar.MINUTE, Min);
         //cal.set(Calendar.SECOND,10);
@@ -90,6 +105,31 @@ public class CallRecivers extends BroadcastReceiver {
 
 
 
+        //alrm
+        Calendar c = Calendar.getInstance();
+        System.out.println("Current time => " + c.getTime());
+        SimpleDateFormat df = new SimpleDateFormat("yyyy/MM/dd");
+        String formattedDate = df.format(c.getTime());
+        String rem=" ";
+        rem=rem+MainActivity.DATABASEHANDLER.databasetostringReminder(formattedDate);
+        Log.d("Ishaa","a"+rem+"b");
+        if(!rem.equals(" ")) {
+            Log.d("Ishaa","Have reminders");
+            AlarmManager alarmManagerr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+            //Intent notificationIntent = new Intent(context, AlarmReceiverItemNotification.class);
+            Intent notificationIntent1 = new Intent(context, HealthReminder.class);
+            PendingIntent broadcastr = PendingIntent.getBroadcast(context, 100, notificationIntent1, PendingIntent.FLAG_UPDATE_CURRENT);
+            Calendar calr = Calendar.getInstance();
+            calr.setTimeInMillis(System.currentTimeMillis());
+            //cal.set(Calendar.DAY_OF_WEEK,3);
+            calr.set(Calendar.HOUR_OF_DAY, reciverHr);
+            calr.set(Calendar.MINUTE, Min);
+            //cal.set(Calendar.SECOND,10);
+
+            //alarmManager.setExact(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), broadcast);
+            alarmManagerr.setInexactRepeating(AlarmManager.RTC_WAKEUP, calr.getTimeInMillis(),
+                    AlarmManager.INTERVAL_DAY, broadcastr);
+        }
 
     }
 
